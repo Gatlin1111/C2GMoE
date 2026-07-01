@@ -126,24 +126,21 @@ def run_experiment(run_id, seed, args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     data = data.to(device)
     def count_mask_nodes(mask):
-        """辅助函数：计算mask中为True的节点数（兼容tensor和numpy数组）"""
         if isinstance(mask, torch.Tensor):
-            return mask.cpu().numpy().sum()  # 转CPU避免GPU tensor统计问题
+            return mask.cpu().numpy().sum()  
         elif isinstance(mask, np.ndarray):
             return mask.sum()
         else:
             return 0
 
-    # 统计各集数量（适配绝大多数GNN数据集的mask命名）
     train_num = count_mask_nodes(data.train_mask)
     val_num = count_mask_nodes(data.val_mask)
     test_num = count_mask_nodes(data.test_mask)
-    total_num = data.num_nodes  # 总节点数
-    
-    # 格式化打印（含占比，更直观）
-    print(f"训练集节点数: {train_num} ({train_num/total_num*100:.1f}%)")
-    print(f"验证集节点数: {val_num} ({val_num/total_num*100:.1f}%)")
-    print(f"测试集节点数: {test_num} ({test_num/total_num*100:.1f}%)")
+    total_num = data.num_nodes 
+
+    print(f"Train node: {train_num} ({train_num/total_num*100:.1f}%)")
+    print(f"Valid Node: {val_num} ({val_num/total_num*100:.1f}%)")
+    print(f"Test Node: {test_num} ({test_num/total_num*100:.1f}%)")
 
     print("Preprocessing node groups...")
     node_groups, actual_num_groups, cache_file = preprocess_node_groups(
